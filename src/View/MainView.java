@@ -377,6 +377,7 @@ public class MainView extends Application {
         Projectile projectile = new Projectile(mark, shootingTux.getX() + 20, shootingTux.getY());
         projectiles.add(projectile);
         root.getChildren().add(projectile.getShoot());
+        shootingTux.setStyle(null);
     }
 
     public void majProjectiles() {
@@ -423,5 +424,15 @@ public class MainView extends Application {
 
     public List<ImageView> getWindowsList() {
         return windowsList;
+    }
+
+    public void changeAura(int powerAura) {
+        if (powerAura == 3) {
+            shootingTux.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(100, 0, 0, 0.9), 10, 0.9, 0, 0);");
+        } else if (powerAura == 2) {
+            shootingTux.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0, 100, 0, 0.9), 10, 0.9, 0, 0);");
+        } else {
+            shootingTux.setStyle(null);
+        }
     }
 }

@@ -15,10 +15,12 @@ public class GameController implements EventHandler<KeyEvent> {
     private MainView mainView;
     private Game game;
     private Level currentLevel;
+    private int powerAura;
 
     private BooleanProperty leftKeyTyped, rightKeyTyped, spaceBarKeyTyped;
 
     public GameController(MainView mainView, Game game) {
+        powerAura = 0;
         leftKeyTyped = new SimpleBooleanProperty(false);
         rightKeyTyped = new SimpleBooleanProperty(false);
         spaceBarKeyTyped = new SimpleBooleanProperty(false);
@@ -59,8 +61,8 @@ public class GameController implements EventHandler<KeyEvent> {
         mainView.moveRight();
     }
 
-    public synchronized void shoot(int mark) {
-        mainView.shoot(mark);
+    public synchronized void shoot() {
+        mainView.shoot(powerAura);
     }
 
     public synchronized boolean isLeftKeyTyped() {
@@ -86,7 +88,16 @@ public class GameController implements EventHandler<KeyEvent> {
         }
     }
 
-    public void setBeginText(String text) {
+    public synchronized void setBeginText(String text) {
         mainView.majBeginningAnimation(text);
+    }
+
+    public synchronized int getPowerAura() {
+        return powerAura;
+    }
+
+    public synchronized void setPowerAura(int powerAura) {
+        this.powerAura = powerAura;
+        mainView.changeAura(powerAura);
     }
 }

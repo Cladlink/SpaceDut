@@ -10,18 +10,22 @@ public class GameTimeline extends AnimationTimer {
     private GameController gameController;
     private boolean isSpaceBarKeyTyped;
     private double timeSpaceBarPressed;
+    private double initTimeSpaceBarPressed;
     private boolean isLevelStarted;
     private boolean firstTime = true;
 
     public GameTimeline(GameController gameController) {
+        gameController.setPowerAura(0);
         this.gameController = gameController;
         isSpaceBarKeyTyped = false;
         timeSpaceBarPressed = 0;
         isLevelStarted = false;
+        initTimeSpaceBarPressed = 0;
     }
 
     @Override
     public void handle(long now) {
+
         if (firstTime) {
             lastUpdate = now;
             firstTime = false;
@@ -50,20 +54,31 @@ public class GameTimeline extends AnimationTimer {
             } else if (gameController.isRightKeyTyped()) {
                 gameController.moveRight();
             }
-
-            if (gameController.isSpaceBarKeyTyped() && !isSpaceBarKeyTyped) {
-                isSpaceBarKeyTyped = true;
+            if (gameController.isSpaceBarKeyTyped() && initTimeSpaceBarPressed == 0) {
+                initTimeSpaceBarPressed = now;
+                System.out.println("inittimespacebarpressed");
+            } else if (gameController.isSpaceBarKeyTyped()) {
+                System.out.println("time SpaceBar Pressed");
                 timeSpaceBarPressed = now;
-            } else if (!gameController.isSpaceBarKeyTyped() && isSpaceBarKeyTyped) {
-                timeSpaceBarPressed = (int) ((now - timeSpaceBarPressed) / 300_000_000);
-                if (timeSpaceBarPressed > 3) {
-                    timeSpaceBarPressed = 3;
-                } else if (timeSpaceBarPressed < 2) {
-                    timeSpaceBarPressed = 1;
+                gameController.setPowerAura((int) ((timeSpaceBarPressed - initTimeSpaceBarPressed) / 300_000_000));
+
+                if (gameController.getPowerAura() >= 4) {
+                    gameController.setPowerAura(3);
+                } else if (gameController.getPowerAura() <= 1) {
+                    gameController.setPowerAura(1);
+                } else {
+                    gameController.setPowerAura(2);
                 }
-                gameController.shoot((int) timeSpaceBarPressed);
+
+                System.out.println(gameController.getPowerAura());
+                timeSpaceBarPressed = now;
+                isSpaceBarKeyTyped = true;
+            } else if (!gameController.isSpaceBarKeyTyped() && isSpaceBarKeyTyped) {
+                System.out.println("time space bar released");
+                gameController.shoot();
                 isSpaceBarKeyTyped = false;
-                timeSpaceBarPressed = 0;
+                gameController.setPowerAura(0);
+                timeSpaceBarPressed = initTimeSpaceBarPressed = 0;
             }
             lastUpdate = now;
         }
